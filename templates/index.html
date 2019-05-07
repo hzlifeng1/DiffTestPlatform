@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>代码变更覆盖率统计平台</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px;height: 100px">
+        <div class="container">
+            <div class="navbar-header">
+                <h1 class="navbar-brand" href="#" style="font-size: 30px"><strong>代码变更覆盖率统计平台</strong></h1>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse" style="margin-top: 30px">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{ user }}</a></li>
+                    <li><a href="/">退出</a> </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="navbar navbar-default col-md-2" role="navigation" style="width: 250px;height: 600px">
+        <div class="container-fluid">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="navbar-header"><a><strong>项目列表</strong></a></li>
+                <li class="nav-divider"></li>
+                {% for foo in pro_list %}
+                    {% ifequal foo.id id  %}
+                        <li class="active"><a href="/index/{{ foo.id }}">{{ foo.project_name }}-{{ foo.project_ver }}</a> </li>
+                    {% else %}
+                        <li><a href="/index/{{ foo.id }}">{{ foo.project_name }}-{{ foo.project_ver }}</a> </li>
+                    {% endifequal %}
+                {% endfor %}
+                {% if id == 0 %}
+                    <li class="active"><a href="/index">ALL</a></li>
+                {% else %}
+                    <li><a href="/index">ALL</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-header col-md-9" style="margin-top: 0px">
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form" id="pro1_filter" method="get" action="/task_search/{{ id }}">
+                <label>服务名称：</label>
+                <select name="server" class="selectpicker show-tick form-control" id="server">
+                    {% if ser == 'All' %}
+                        <option value="All">All</option>
+                    {% else %}
+                        <option value="{{ ser }}">{{ ser }}</option>
+                    {% endif %}
+                    {% for foo in ser_list %}
+                        {% ifnotequal ser foo.server_name %}
+                            <option value="{{ foo.server_name }}">{{ foo.server_name }}</option>
+                        {% endifnotequal %}
+                    {% endfor %}
+                    {% if ser != 'All' %}
+                        <option value="All">All</option>
+                    {% endif %}
+                </select>
+                <button type="submit" class="btn btn-success" style="margin-left: 10px">查询</button>
+                <button type="button" class="btn btn-primary" style="margin-left: 20px"
+                        onclick="location='/add_task/{{ id }}'">新增任务
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row col-md-10" style="padding-top: 0px;" id="task_list" name="task_list">
+        <table border="1" width="100%" class="table table-bordered table-striped table-hover table-condensed" style="margin-left: 30px">
+            <thead>
+                <tr class="info" >
+                    <th class="table-title">序号</th>
+                    <th class="table-set">任务名称</th>
+                    <th class="table-type">所属项目</th>
+                    <th class="table-title">服务名称</th>
+                    <th class="table-title">比对分支</th>
+                    <th class="table-date am-hide-sm-only">更新时间</th>
+                    <th width="203px" class="table-set">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for foo in task_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="/edit_task/{{ id }}/{{ foo.id }}/">{{ foo.task_name }}</a></td>
+                        <td>{{ foo.belong_pro.project_name }}</td>
+                        <td>{{ foo.belong_server.server_name }}</td>
+                        <td>{{ foo.branch_no }}</td>
+                        <td class="am-hide-sm-only">{{ foo.update_time }}</td>
+                        <td style="padding-top: 5px">
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="btn btn-success btn-sm"
+                                            data-toggle="tooltip" data-placement="top" title="执行统计"
+                                            onclick="show('{{ foo.id }}','{{ id }}')"><span
+                                            class="glyphicon glyphicon-hand-down"></span></button>
+                                    <button type="button"
+                                            class="btn btn-danger btn-sm"
+                                            data-toggle="tooltip" data-placement="top" title="删除任务"
+                                            onclick="prompt('{{ foo.id }}')"> <span
+                                            class="glyphicon glyphicon-trash"></span></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!--窗口头部-->
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">
+                        <span aria-hidden="true">&times</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4>删除确认框</h4>
+                </div>
+                <!--窗口中体-->
+                <div class="modal-body">
+                    <p>大哥，要不要犹豫下？</p>
+                </div>
+                <!--窗口尾部-->
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">那就再想想吧</button>
+                    <button class="btn btn-primary " type="button" onclick="invalid()">果断删</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loadingModal">
+        <div style="width: 300px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+            <div class="progress progress-striped active" style="margin-bottom: 0;">
+                <div class="progress-bar" style="width: 100%;"></div>
+            </div>
+            <h4 style="color:rgba(0,0,0,0.95)"> <strong>数据已经在路上，请稍等！</strong> </h4>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var name2= '';
+
+        function prompt(name){
+                $('#myModal1').modal('show')
+                name2 = name;
+            }
+
+        function show(tid,eid) {
+            $('#loadingModal').modal('show');
+            window.location.href='/jacoco_diff/'+eid+'/'+tid;
+        }
+
+        function invalid() {
+            var data = {
+                "id": name2,
+                'mode': 'del'
+            };
+            $.ajax({
+                type: 'post',
+                url: '/index/',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    if (data !== 'ok') {
+                        myAlert(data);
+                    }
+                    else {
+                        window.location.reload();
+                    }
+                },
+                error: function () {
+                    myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                }
+            });
+        }
+
+        function myAlert(data) {
+            $('#my-alert_print').text(data);
+            $('#my-alert').modal({
+                relatedTarget: this
+            });
+        }
+    </script>
+</body>
+</html>

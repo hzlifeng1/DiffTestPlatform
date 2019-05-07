@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+</head>
+
+<body role="document">
+    <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px;height: 100px">
+        <div class="container">
+            <div class="navbar-header">
+                <h1 class="navbar-brand" href="#" style="font-size: 30px"><strong>代码变更覆盖率统计平台</strong></h1>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse" style="margin-top: 30px">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{ user }}</a></li>
+                    <li><a href="/">退出</a> </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div id="navbar" class="navbar-collapse collapse" style="margin-left: 30px">
+            <span class="glyphicon glyphicon-flag glyphicon-lg"></span>
+            <label style="font-size: 20px;margin-left: 10px"  >编辑任务</label>
+        </div>
+    </div>
+
+    <form role="form" method="post" action="/edit_task/{{ eid }}/{{ tid }}/" style="margin-left: 60px">
+        <div class="form-group">
+            <div class="input-group col-md-3 col-md-offset-1">
+                <div class="input-group-addon">任务名称</div>
+                <input type="text" class="form-control" id="task_name" name="task_name" size="50"
+                        placeholder="jenkins上创建的覆盖率任务名称" value={{ task }}>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group col-md-3 col-md-offset-1">
+                <div class="input-group-addon">所属项目</div>
+                    <select name="pro" class="form-control" id="pro">
+                        <option value="{{ pro }}">{{ pro }}</option>
+                    </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group col-md-3 col-md-offset-1">
+                <div class="input-group-addon">对应服务</div>
+                <select name="ser" class="form-control" id="ser">
+                        <option value="{{ ser }}">{{ ser }}</option>
+                        {% for foo in ser_list %}
+                            {% ifnotequal ser foo.server_name %}
+                                <option value="{{ foo.server_name }}">{{ foo.server_name }}</option>
+                            {% endifnotequal %}
+                        {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group col-md-3 col-md-offset-1">
+                <div class="input-group-addon">发布名称</div>
+                <input type="text" class="form-control" id="rel_name" name="rel_name" size="50"
+                        placeholder="jenkins上服务发布的任务名称" value={{ rel }}>
+            </div>
+        </div>
+        <div class="form-group">
+           <div class="input-group col-md-3 col-md-offset-1">
+                <div class="input-group-addon">比对版本</div>
+                <input type="text" class="form-control" id="branch_no" name="branch_no" size="50"
+                        placeholder="用来比对的线上commit版本号" value={{ commit }}>
+            </div>
+        </div>
+        <div class="form-group" style="padding-top: 15px">
+            <div class="input-group col-md-4 col-md-offset-1">
+                <button type="submit" class="btn btn-primary" >点击提交</button>
+                <button class="btn btn-success" type="button" onclick="location='/index/'" style="margin-left: 20px">返回</button>
+            </div>
+        </div>
+    </form>
+
+</body>
+</html>

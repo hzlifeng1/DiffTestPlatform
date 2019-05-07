@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CR测试平台</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0px;height: 100px">
+        <div class="container">
+            <div class="navbar-header">
+                <h1 class="navbar-brand" href="#" style="font-size: 30px"><strong>代码变更覆盖率统计平台</strong></h1>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse" style="margin-top: 30px">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{ user }}</a></li>
+                    <li><a href="/">退出</a> </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header col-md-9" style="margin-top: 10px">
+        <div id="navbar" class="navbar-collapse collapse">
+            <button type="button" class="btn btn-primary" style="margin-left: 20px"
+                    onclick="location='/index/{{ eid }}'">返回
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-10">
+        <br/><b style="font-size:120%">{{ task_name }}</b><br/>
+        {% if ret %}
+            <table border="1" width="100%" class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>包名</th>
+                        <th>类名</th>
+                        <th>总变更代码行数</th>
+                        <th>已覆盖变更代码行数</th>
+                        <th>变更覆盖率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for foo in ret %}
+                        <tr>
+                            <td>{{ foo.package }}</td>
+                            {% ifnotequal foo.class '总体' %}
+                                <td><a href="{% url 'detail' eid=eid task=task_name package=foo.package class_=foo.class %}" target="_blank">{{ foo.class }}</a></td>
+                            {% else %}
+                                <td>{{ foo.class }}</td>
+                            {% endifnotequal %}
+                            <td>{{ foo.new }}</td>
+                            <td>{{ foo.cover }}</td>
+                            <td>{{ foo.cover_rate }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>获取当前服务代码覆盖率失败或当前服务无变更代码，具体请联系管理员</p>
+        {% endif %}
+        <br/><br/>
+    </div>
+
+
+</body>
+</html>

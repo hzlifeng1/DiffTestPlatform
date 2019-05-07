@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+    <style>
+        body {
+            color: #fff;
+            font-family: "微软雅黑";
+            font-size: 14px;
+        }
+
+        .wrap1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 10%;
+            left: 50%;
+            margin: auto
+        }
+
+        /*把整个屏幕真正撑开--而且能自己实现居中*/
+        .main_content {
+            background:url({% static "main_bg.png" %}) repeat;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            float: none;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .privacy {
+            padding-top: 0;
+            font-size: 13px;
+        }
+
+        @media (min-width: 200px) {
+            .pd-xs-20 {
+                padding: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .pd-sm-50 {
+                padding: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body style="background:url({% static "bg.jpg" %}) no-repeat;">
+
+<div class="container wrap1" style="height:450px;">
+    <h3 class=" text-center" style="margin-top: 20px">用户注册</h3>
+    <div class="col-sm-8 col-md-5 pd-sm-50 pd-xs-20 main_content">
+        <form class="form-header" role="form" id="register_form">
+            <div class="form-group">
+                <input class="form-control input-lg" name="user" id="user" type="text"
+                       placeholder="账号">
+            </div>
+            <div class="form-group">
+                <input class="form-control input-lg" name="pw" id="pw" type="password"
+                       placeholder="密码">
+            </div>
+            <div class="form-group">
+                <input class="form-control input-lg" name="repw" id="repw" type="password"
+                       placeholder="确认密码">
+            </div>
+            <div class="form-group">
+                <select name="station" class="selectpicker show-tick form-control input-lg" id="station" >
+                    <option value="测试人员">测试人员</option>
+                    <option value="开发人员">开发人员</option>
+                    <option value="其他人员">其他人员</option>
+                </select>
+            </div>
+            <div class="form-group last">
+                <input type="button" class="btn btn-success btn-block btn-lg" value="注册"
+                       onclick="register_ajax('#register_form')">
+            </div>
+            <p style="font-size: medium" class="privacy text-center">如果已有账号？ <a
+                    href="/" style="color: #19868b">登录</a>.</p>
+        </form>
+
+    </div><!--row end-->
+</div><!--container end-->
+
+
+<script type="text/javascript">
+    $(function () {
+        $('form').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                user: {
+                    message: '用户名验证失败',
+                    validators: {
+                        stringLength: {
+                            min: 3,
+                            max: 15,
+                            message: '用户名长度必须在3到15位之间'
+                        },
+                        regexp: {
+                            regexp: /^[a-z0-9_-]{3,16}$/,
+                            message: '用户名只能包含小写、数字和下划线'
+                        }
+                    }
+                },
+                pw: {
+                    validators: {
+                        stringLength: {
+                            min: 6,
+                            max: 18,
+                            message: '密码长度必须在6到18位之间'
+                        },
+                        regexp: {
+                            regexp: /^[a-z0-9_-]{3,16}$/,
+                            message: '密码只能包含小写、数字和下划线'
+                        }
+                    }
+                },
+                repw: {
+                    message: '密码无效',
+                    validators: {
+                        identical: {//相同
+                            field: 'pw',
+                            message: '两次密码不一致'
+                        },
+                    }
+                },
+            }
+        });
+    });
+
+    /*表单信息异步传输*/
+    function register_ajax(id) {
+        if ($(id).data('bootstrapValidator').isValid()) {
+            var data = $(id).serializeJSON();
+            var url;
+            if (id === "#register_form") {
+                url = '/register/';
+            }
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (result) {
+                    if (result === '恭喜您，账号已成功注册') {
+                        window.location.href = '/';
+                        alert('注册成功,请联系管理员配置项目权限后方可进行登录操作！')
+                    } else {
+                        alert(result);
+                    }
+                },
+                error: function () {
+                    alert('Sorry，服务器可能开小差啦, 请重试!')
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

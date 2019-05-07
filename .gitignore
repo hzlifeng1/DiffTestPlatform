@@ -1,0 +1,5 @@
+.idea
+CodeDiff/__pycache__/
+CodeDiff/migrations/__pycache__/
+DiffTestPlatform/__pycache__/
+venv/
