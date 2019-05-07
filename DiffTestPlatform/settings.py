@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'DiffTestPlatform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'difftest',
-        'USER': 'root',
-        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',  #数据库所在服务器的ip地址
+        'PORT': '3306',   #监听端口 默认3306即可
+        'NAME': 'difftest',  #新建数据库名
+        'USER': 'root',   #数据库登录名
+        'PASSWORD': '123456',   #数据库登录密码
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
