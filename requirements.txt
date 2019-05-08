@@ -1,0 +1,8 @@
+Django==2.2
+django-bootstrap3==11.0.0
+gitdb2==2.0.5
+GitPython==2.1.11
+mysqlclient==1.4.2.post1
+pytz==2019.1
+smmap2==2.0.5
+sqlparse==0.3.0
