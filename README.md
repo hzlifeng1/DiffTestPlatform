@@ -10,9 +10,14 @@
 - 覆盖率详情：查看指定类文件的覆盖率详情，基于jacoco的覆盖率报告，显示规则基本一致，唯一区别对不属于变更的代码不会有底色显示
 - 权限管理：后台对账号控制项目权限，来控制对应人员只能看到制定的项目情况
 
+### 版本要求
+***
+python：3.4以上，建议3.6  
+mysql：5.7以上
+
 ### 本地环境部署
 ***
-1.安装mysql数据库服务端(推荐5.7+),并设置为utf-8编码，创建相应difftest数据库，设置好相应用户名、密码，启动mysql  
+1.安装mysql数据库服务端,并设置为utf-8编码，创建相应difftest数据库，设置好相应用户名、密码，启动mysql  
 2.修改：DiffTestPlatform/DiffTestPlatform/setting.py里DATABASE的配置  
 ```
 DATABASES = {
